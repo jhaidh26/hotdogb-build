@@ -1,0 +1,22 @@
+env:
+  CIRRUS_CLONE_DEPTH: 1
+
+task:
+  name: "Build Infinity-X hotdogb A15"
+  timeout_in: 120m
+  container:
+    image: apon77/aosp:latest
+    cpu: 8
+    memory: 32G
+
+  sync_script:
+    - mkdir -p ~/rom
+    - cd ~/rom
+    - repo init -q -u https://github.com/Project-Infinity/manifest -b 16 --depth=1
+    - repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+
+  build_script:
+    - cd ~/rom
+    - source build/envsetup.sh
+    - lunch infinity_hotdogb-userdebug
+    - mka bacon -j$(nproc --all)
